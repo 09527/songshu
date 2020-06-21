@@ -141,7 +141,6 @@
             color: white;
             background-color: darkgray;
         }
-
     </style>
 
 </head>
@@ -157,7 +156,7 @@
             <p class="sex-conent">男</p>
             <ul class="sexSelect">
                 <li class="sexOption">
-                    男111
+                    男
                 </li>
                 <li class="sexOption">
                     女
@@ -229,13 +228,14 @@
                 }
 
                 var coverdom = document.getElementsByClassName(that.boxInfo.coverclassname)[0];
-                coverdom.ondrag = function() {
-                    console.log(1)
-                }
                 coverdom.onmousedown = function() {
-                    console.log(1)
+
+                }
+                coverdom.onmousemove = function() {
+
                 }
             }
+
             this.doclick = function(tagclassname) {
                 console.log(1)
             }
@@ -252,8 +252,5 @@
         drobj.init();
         drobj.transshow("sex-box", "sexSelect", "inline-block")
         drobj.transhide("sexSelect", "sex-conent")
-
     </script>
-</body>
-
-</html>
+</body></html>
