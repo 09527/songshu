@@ -85,6 +85,99 @@
             z-index: 2;
         }
 
+        .img-result {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-color: white;
+            top: 80px;
+            left: 80px;
+        }
+
+        .img-result-copy {
+            width: 100px;
+            height: 100px;
+            background-color: antiquewhite;
+        }
+
+        .img-r-top {
+            position: absolute;
+            width: 100%;
+            left: 0px;
+            top: 0px;
+            border: 1px solid #69f;
+            cursor: n-resize;
+        }
+
+        .img-r-left {
+            position: absolute;
+            height: 100%;
+            left: 0px;
+            top: 0px;
+            border: 1px solid #69f;
+            cursor: w-resize;
+        }
+
+        .img-r-bottom {
+            position: absolute;
+            width: 100%;
+            left: 0px;
+            bottom: -2px;
+            border: 1px solid #69f;
+            cursor: s-resize;
+        }
+
+        .img-r-right {
+            position: absolute;
+            height: 100%;
+            right: -2px;
+            top: 0px;
+            border: 1px solid #69f;
+            cursor: e-resize;
+        }
+
+        .img-r-lt {
+            position: absolute;
+            left: -2px;
+            top: -2px;
+            width: 5px;
+            height: 5px;
+            background-color: #69f;
+            cursor: nw-resize;
+        }
+
+        .img-r-rt {
+            position: absolute;
+            right: -3px;
+            top: -2px;
+            width: 5px;
+            height: 5px;
+            background-color: #69f;
+            cursor: ne-resize;
+        }
+
+        .img-r-lb {
+            position: absolute;
+            left: -2px;
+            bottom: -3px;
+            width: 5px;
+            height: 5px;
+            background-color: #69f;
+            cursor: sw-resize;
+        }
+
+        .img-r-rb {
+            position: absolute;
+            right: -3px;
+            bottom: -3px;
+            width: 5px;
+            height: 5px;
+            background-color: #69f;
+            cursor: se-resize;
+        }
+
+
+
         .userImgBox {
             display: none;
             position: absolute;
@@ -100,8 +193,6 @@
             left: 0px;
             top: 0px;
         }
-
-        .iptfile {}
 
         .sex-box {
             font-size: 12px;
@@ -169,12 +260,24 @@
         <label class="ipttit" for="userCardid">身份证号</label><input class="ipt" id="userCardid" type="passWord" placeholder="请输入密码">
         <div class="imgUp">
             <div class="img-cover">
-
+                <div class="img-result">
+                    <span class="img-r-top"></span>
+                    <span class="img-r-left"></span>
+                    <span class="img-r-right"></span>
+                    <span class="img-r-bottom"></span>
+                    <span class="img-r-lt"></span>
+                    <span class="img-r-lb"></span>
+                    <span class="img-r-rt"></span>
+                    <span class="img-r-rb"></span>
+                    <span class="img-r-x"></span>
+                    <span class="img-r-y"></span>
+                </div>
             </div>
             <div class="userImgBox">
                 <img class="showUserImg">
             </div>
         </div>
+        <img class="img-result-copy">
         <input type="file" class="iptfile">
     </div>
     <script>
@@ -184,7 +287,8 @@
                 imgClassName: "",
                 imgDivClassname: "",
                 targetIptClassname: "",
-                coverclassname: ""
+                coverclassname: "",
+                imgresultclassname: ""
             }
             this.init = function() {
                 that.bindevent();
@@ -216,6 +320,7 @@
             }
             this.bindevent = function() {
                 var targetdom = document.getElementsByClassName(that.boxInfo.targetIptClassname)[0];
+                var imgresultcopydom = document.getElementsByClassName(that.boxInfo.imgresultcopyclassname)[0];
                 targetdom.onchange = function() {
                     var file = targetdom.files[0];
                     r = new FileReader(); //本地预览
@@ -223,17 +328,56 @@
                         var imgBox = document.getElementsByClassName(that.boxInfo.imgClassName)[0];
                         imgBox.src = r.result;
                         imgBox.parentNode.style.display = "block";
+                        imgresultcopydom.src = r.result;
                     }
                     r.readAsDataURL(file); //Base64
                 }
 
                 var coverdom = document.getElementsByClassName(that.boxInfo.coverclassname)[0];
-                coverdom.onmousedown = function() {
+                var imgitem = document.getElementsByClassName(that.boxInfo.imgClassName)[0];
+                var resultdom = document.getElementsByClassName(that.boxInfo.imgresultclassname)[0];
+                var imgmovestate = false,
+                    resultmovestate = false,
+                    mousex = 0,
+                    mousey = 0,
+                    movex = 0,
+                    movey = 0,
+                    imgx = 0,
+                    imgy = 0;
 
+                coverdom.onmousedown = function(e) {
+                    mousex = e.clientX;
+                    mousey = e.clientY;
+                    if (e.target == resultdom) {
+                        resultmovestate = true;
+                        imgx = resultdom.offsetLeft;
+                        imgy = resultdom.offsetTop;
+                    } else {
+                        imgmovestate = true;
+                        imgx = imgitem.offsetLeft;
+                        imgy = imgitem.offsetTop;
+                    }
                 }
-                coverdom.onmousemove = function() {
+                coverdom.onmousemove = function(e) {
+                    if (imgmovestate == true) {
+                        movex = mousex - e.clientX;
+                        movey = mousey - e.clientY;
+                        imgitem.style.left = imgx - movex + "px";
+                        imgitem.style.top = imgy - movey + "px";
+                    }
+                    if (resultmovestate == true) {
+                        movex = mousex - e.clientX;
+                        movey = mousey - e.clientY;
+                        resultdom.style.left = imgx - movex + "px";
+                        resultdom.style.top = imgy - movey + "px";
+                    }
+                }
+                coverdom.onmouseup = function() {
+                    imgmovestate = false;
+                    resultmovestate = false;
+                }
 
-                }
+
             }
 
             this.doclick = function(tagclassname) {
@@ -247,7 +391,8 @@
             imgClassName: "showUserImg",
             imgDivClassname: "imgUp",
             targetIptClassname: "iptfile",
-            coverclassname: "img-cover"
+            coverclassname: "img-cover",
+            imgresultclassname: "img-result",
         }
         drobj.init();
         drobj.transshow("sex-box", "sexSelect", "inline-block")
