@@ -1,0 +1,255 @@
+<!DOCtype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .user-box {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        .user-info-tit {
+            text-align: center;
+            font-size: 25px;
+            font-weight: 600;
+            padding: 5px;
+            color: #767575;
+        }
+
+        .ipttit {
+            font-size: 12px;
+            text-align-last: justify;
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+            background-color: #8000ff;
+            padding: 5px 10px;
+            margin: 5px;
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0px 0px 5px #00ceff;
+        }
+
+        .ipt {
+            padding: 5px 15px;
+            margin: 5px;
+            outline: none;
+            border: 1px solid #e24adc;
+            border-radius: 10px;
+        }
+
+        .imgUp {
+            position: relative;
+            text-align: center;
+            width: 300px;
+            height: 300px;
+            background-color: bisque;
+            border-radius: 5px;
+            overflow: hidden;
+            display: table;
+        }
+
+        .imgUp:before {
+            vertical-align: middle;
+            display: table-cell;
+            content: "+";
+            color: gray;
+            font-size: 35px;
+            transform: translate(-50% -50%);
+        }
+
+        .imgUp:hover {
+            background-color: burlywood;
+        }
+
+        .imgUp:hover:before {
+            color: white;
+        }
+
+        .img-cover {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: .5;
+            cursor: move;
+            z-index: 2;
+        }
+
+        .userImgBox {
+            display: none;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            background-color: #e2e2e2;
+        }
+
+        .showUserImg {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+
+        .iptfile {}
+
+        .sex-box {
+            font-size: 12px;
+            background-color: aqua;
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .sexSelect {
+            visibility: hidden;
+            display: inline-block;
+            text-align: center;
+            position: absolute;
+            top: 25px;
+            left: 0px;
+            list-style: none;
+            width: 50px;
+            background-color: white;
+            border: 1px solid gray;
+            border-bottom-left-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        .sexOption {
+            cursor: default;
+            user-select: none;
+            width: 100%;
+            float: left;
+            line-height: 20px;
+            height: 20px;
+        }
+
+        .sexOption:hover {
+            color: white;
+            background-color: darkgray;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div class="user-box">
+        <div class="user-info-tit">
+            用户信息录入
+        </div>
+        <label class="ipttit" for="user-name">姓名</label><input id="user-name" class="ipt userName" placeholder="请输入用户名"><br>
+        <label class="ipttit">性别</label>
+        <div class="sex-box">
+            <p class="sex-conent">男</p>
+            <ul class="sexSelect">
+                <li class="sexOption">
+                    男
+                </li>
+                <li class="sexOption">
+                    女
+                </li>
+            </ul>
+
+        </div>
+
+        <br>
+        <label class="ipttit" for="userCardid">身份证号</label><input class="ipt" id="userCardid" type="passWord" placeholder="请输入密码">
+        <div class="imgUp">
+            <div class="img-cover">
+
+            </div>
+            <div class="userImgBox">
+                <img class="showUserImg">
+            </div>
+        </div>
+        <input type="file" class="iptfile">
+    </div>
+    <script>
+        function dr() {
+            var that = this;
+            this.boxInfo = {
+                imgClassName: "",
+                imgDivClassname: "",
+                targetIptClassname: "",
+                coverclassname: ""
+            }
+            this.init = function() {
+                that.bindevent();
+            }
+            this.transclick = function(nowClassname, targetClassname) { //转义点击操作到目标元素
+                var nowdom = document.getElementsByClassName(nowClassname)[0];
+                var targetdom = document.getElementsByClassName(targetClassname)[0];
+                nowdom.onclick = function(e) {
+                    e.preventDefault();
+                    targetdom.click();
+                }
+            }
+            this.transshow = function(nowClassname, targetClassname, showtype) { //联动显示操作到目标元素
+                var nowdom = document.getElementsByClassName(nowClassname)[0];
+                var targetdom = document.getElementsByClassName(targetClassname)[0];
+                nowdom.onclick = function(e) {
+                    e.stopPropagation();
+                    targetdom.style.visibility = "visible";
+                }
+            }
+            this.transhide = function(nowclassname, targetclassname) { //联动隐藏选择框操作到目标元素
+                var nowdom = document.getElementsByClassName(nowclassname)[0];
+                var targetdom = document.getElementsByClassName(targetclassname)[0];
+                nowdom.onclick = function(e) {
+                    e.stopPropagation();
+                    targetdom.innerHTML = e.target.innerHTML;
+                    nowdom.style.visibility = "hidden"; //冒泡
+                }
+            }
+            this.bindevent = function() {
+                var targetdom = document.getElementsByClassName(that.boxInfo.targetIptClassname)[0];
+                targetdom.onchange = function() {
+                    var file = targetdom.files[0];
+                    r = new FileReader(); //本地预览
+                    r.onload = function() {
+                        var imgBox = document.getElementsByClassName(that.boxInfo.imgClassName)[0];
+                        imgBox.src = r.result;
+                        imgBox.parentNode.style.display = "block";
+                    }
+                    r.readAsDataURL(file); //Base64
+                }
+
+                var coverdom = document.getElementsByClassName(that.boxInfo.coverclassname)[0];
+                coverdom.ondrag = function() {
+                    console.log(1)
+                }
+                coverdom.onmousedown = function() {
+                    console.log(1)
+                }
+            }
+            this.doclick = function(tagclassname) {
+                console.log(1)
+            }
+        }
+
+
+        var drobj = new dr();
+        drobj.boxInfo = {
+            imgClassName: "showUserImg",
+            imgDivClassname: "imgUp",
+            targetIptClassname: "iptfile",
+            coverclassname: "img-cover"
+        }
+        drobj.init();
+        drobj.transshow("sex-box", "sexSelect", "inline-block")
+        drobj.transhide("sexSelect", "sex-conent")
+    </script>
+</body></html>
