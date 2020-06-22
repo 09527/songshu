@@ -94,11 +94,6 @@
             left: 80px;
         }
 
-        .img-result-copy {
-            width: 100px;
-            height: 100px;
-            background-color: antiquewhite;
-        }
 
         .img-r-top {
             position: absolute;
@@ -175,8 +170,6 @@
             background-color: #69f;
             cursor: se-resize;
         }
-
-
 
         .userImgBox {
             display: none;
@@ -320,7 +313,6 @@
             }
             this.bindevent = function() {
                 var targetdom = document.getElementsByClassName(that.boxInfo.targetIptClassname)[0];
-                var imgresultcopydom = document.getElementsByClassName(that.boxInfo.imgresultcopyclassname)[0];
                 targetdom.onchange = function() {
                     var file = targetdom.files[0];
                     r = new FileReader(); //本地预览
@@ -328,7 +320,6 @@
                         var imgBox = document.getElementsByClassName(that.boxInfo.imgClassName)[0];
                         imgBox.src = r.result;
                         imgBox.parentNode.style.display = "block";
-                        imgresultcopydom.src = r.result;
                     }
                     r.readAsDataURL(file); //Base64
                 }
